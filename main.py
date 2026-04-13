@@ -6,6 +6,7 @@ import os
 from prompts import SYSTEM_PROMPT
 from tools import AVAILABLE_TOOLS
 from schemas import AgentResponse
+from intents import detect_intent
 
 load_dotenv()
 
@@ -15,53 +16,50 @@ client = OpenAI(
 )
 
 def main():
-    message_history = [
-        {"role": "system", "content": SYSTEM_PROMPT}
-    ]
+    history = [{"role": "system", "content": SYSTEM_PROMPT}]
 
-    print("AI Agent CLI started. Type your query.\n")
+    print("Advanced AI Agent CLI\n")
 
     while True:
-        user_query = input("User ➜ ")
-        message_history.append({"role": "user", "content": user_query})
+        user_input = input("User ➜ ")
+        intent = detect_intent(user_input)
+
+        history.append({
+            "role": "user",
+            "content": f"[intent={intent}] {user_input}"
+        })
 
         while True:
             response = client.chat.completions.parse(
                 model="gemini-2.5-flash",
                 response_format=AgentResponse,
-                messages=message_history
+                messages=history
             )
 
             parsed = response.choices[0].message.parsed
-            message_history.append(
-                {"role": "assistant", "content": json.dumps(parsed.model_dump())}
-            )
+            history.append({"role": "assistant", "content": json.dumps(parsed.model_dump())})
 
             if parsed.step == "PLAN":
                 print("PLAN ➜", parsed.content)
                 continue
 
             if parsed.step == "TOOL":
-                tool_name = parsed.tool
-                tool_input = parsed.input
+                tool_fn = AVAILABLE_TOOLS.get(parsed.tool)
+                tool_result = tool_fn(parsed.input) if tool_fn else "Tool not found"
 
-                print(f"TOOL ➜ {tool_name}({tool_input})")
-
-                tool_output = AVAILABLE_TOOLS[tool_name](tool_input)
-
-                message_history.append({
+                history.append({
                     "role": "developer",
                     "content": json.dumps({
                         "step": "OBSERVE",
-                        "tool": tool_name,
-                        "input": tool_input,
-                        "output": tool_output
+                        "tool": parsed.tool,
+                        "input": parsed.input,
+                        "output": tool_result
                     })
                 })
                 continue
 
             if parsed.step == "OUTPUT":
-                print("\nOUTPUT ➜", parsed.content, "\n")
+                print("OUTPUT ➜", parsed.content, "\n")
                 break
 
 if __name__ == "__main__":
