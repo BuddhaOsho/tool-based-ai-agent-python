@@ -30,6 +30,13 @@ This project demonstrates how modern AI agents reason step‑by‑step, safely i
   - Restricted system command execution
 
 ---
-
+├── main.py              # Agent orchestration + intent routing
+├── tools.py             # All tools + registry
+├── intents.py           # Intent detection logic
+├── prompts.py           # System instructions
+├── schemas.py           # Pydantic schemas
+├── .env
+├── requirements.txt
+└── README.md
 
 
