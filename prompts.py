@@ -14,7 +14,7 @@ Rules:
 
 JSON Format:
 {
-  "step": "PLAN | TOOL | OUTPUT",
+  "step": "PLAN | "TOOL"| "OBSERVE" | OUTPUT",
   "content": "string (optional)",
   "tool": "string (only for TOOL)",
   "input": "string (only for TOOL)"
