@@ -4,6 +4,14 @@ A command‑line AI agent built in Python that follows a structured **PLAN → T
 This project demonstrates how modern AI agents reason step‑by‑step, safely invoke external tools, and return **schema‑validated JSON outputs** instead of unstructured text.
 
 ---
+├── main.py              # Agent orchestration + intent routing
+├── tools.py             # All tools + registry
+├── intents.py           # Intent detection logic
+├── prompts.py           # System instructions
+├── schemas.py           # Pydantic schemas
+├── .env
+├── requirements.txt
+└── README.md
 
 ## 🚀 Features
 
@@ -30,13 +38,6 @@ This project demonstrates how modern AI agents reason step‑by‑step, safely i
   - Restricted system command execution
 
 ---
-├── main.py              # Agent orchestration + intent routing
-├── tools.py             # All tools + registry
-├── intents.py           # Intent detection logic
-├── prompts.py           # System instructions
-├── schemas.py           # Pydantic schemas
-├── .env
-├── requirements.txt
-└── README.md
+
 
 
